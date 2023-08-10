@@ -18,7 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include "SEGGER_RTT.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -31,6 +31,7 @@ CAN_TxHeaderTypeDef TxHeader;
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define BufferSize 1000
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -40,6 +41,7 @@ uint32_t TxMailbox;
 
 uint8_t txData[] = "Hello, CANOK!";  // 要发送的数据
 uint8_t txData_UART[] = "Hello, UART2!";  // 要发送的数据
+uint8_t rxData[BufferSize];
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -79,10 +81,11 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 	TxHeader.StdId = 0x123;
-	TxHeader.DLC = 8;                 // 数据长度�??????? 8 字节
-	TxHeader.IDE = CAN_ID_STD;        // 使用标准标识�???????
-	TxHeader.RTR = CAN_RTR_DATA;      // 数据�???????
-	TxData[0] = 0xAA;                 // 设置发�?�数�???????
+	TxHeader.DLC = 8;                 // 数据长度�??????? 8 字节
+	TxHeader.IDE = CAN_ID_STD;        // 使用标准标识�???????
+	TxHeader.RTR = CAN_RTR_DATA;      // 数据�???????
+	TxData[0] = 0xAA;                 // 设置发�?�数�???????
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -118,16 +121,26 @@ int main(void)
 
 	  /*
 	  if (HAL_UART_Transmit(&huart2, txData_UART, sizeof(txData_UART), 1000) == HAL_OK) {
-	      // 发�?�成�???????
+	      // 发�?�成�???????
 	  }
 	  */
-	  HAL_Delay(100);  // 延迟 1000 毫秒，即 1 �???????
+/*
+	  HAL_Delay(100);  // 延迟 1000 毫秒，即 1 �???????
+	  HAL_UART_Receive(&huart2, rxData, BufferSize, 3000);
+	  HAL_Delay(100);
+	  SEGGER_RTT_printf(0, rxData);
+	  HAL_Delay(100);
+	  HAL_UART_Transmit(&huart2, rxData, sizeof(rxData), 1000);
+*/
+	  HAL_UART_Receive(&huart2, rxData, BufferSize, 3000);
+
 	  if (HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox) == HAL_OK) {
 		  HAL_UART_Transmit(&huart2, txData, sizeof(txData), 1000);
-	      // 发�?�成�???????
+		  SEGGER_RTT_printf(0, "uart2: %s\r\n", rxData);
+
 	  }
 
-	  HAL_Delay(500);  // 延迟 1000 毫秒，即 1 �???????
+	  HAL_Delay(500);  // 延迟 1000 毫秒，即 1 �???????
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
