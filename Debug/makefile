@@ -53,6 +53,12 @@ default.size.stdout \
 OBJDUMP_LIST += \
 Roam_VCU.list \
 
+OBJCOPY_HEX += \
+Roam_VCU.hex \
+
+OBJCOPY_BIN += \
+Roam_VCU.bin \
+
 
 # All Target
 all: main-build
@@ -61,8 +67,8 @@ all: main-build
 main-build: Roam_VCU.elf secondary-outputs
 
 # Tool invocations
-Roam_VCU.elf Roam_VCU.map: $(OBJS) $(USER_OBJS) C:\Users\Chris\Desktop\Roam\Roam_VCU\STM32F105RBTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Roam_VCU.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\Chris\Desktop\Roam\Roam_VCU\STM32F105RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Roam_VCU.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Roam_VCU.elf Roam_VCU.map: $(OBJS) $(USER_OBJS) C:\Users\h1576\Desktop\Roam\Roam_VCU\STM32F105RBTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "Roam_VCU.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\h1576\Desktop\Roam\Roam_VCU\STM32F105RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Roam_VCU.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -76,12 +82,22 @@ Roam_VCU.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
+Roam_VCU.hex: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O ihex $(EXECUTABLES) "Roam_VCU.hex"
+	@echo 'Finished building: $@'
+	@echo ' '
+
+Roam_VCU.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "Roam_VCU.bin"
+	@echo 'Finished building: $@'
+	@echo ' '
+
 # Other Targets
 clean:
-	-$(RM) Roam_VCU.elf Roam_VCU.list Roam_VCU.map default.size.stdout
+	-$(RM) Roam_VCU.bin Roam_VCU.elf Roam_VCU.hex Roam_VCU.list Roam_VCU.map default.size.stdout
 	-@echo ' '
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
+secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_HEX) $(OBJCOPY_BIN)
 
 fail-specified-linker-script-missing:
 	@echo 'Error: Cannot find the specified linker script. Check the linker settings in the build configuration.'

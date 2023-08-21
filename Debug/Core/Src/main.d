@@ -27,8 +27,8 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h \
- C:/Users/Chris/Desktop/Roam/Roam_VCU/RTT/SEGGER_RTT.h \
- C:/Users/Chris/Desktop/Roam/Roam_VCU/RTT/SEGGER_RTT_Conf.h
+ C:/Users/h1576/Desktop/Roam/Roam_VCU/RTT/SEGGER_RTT.h \
+ C:/Users/h1576/Desktop/Roam/Roam_VCU/RTT/SEGGER_RTT_Conf.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 ../Core/Inc/stm32f1xx_hal_conf.h:
@@ -58,5 +58,5 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h:
-C:/Users/Chris/Desktop/Roam/Roam_VCU/RTT/SEGGER_RTT.h:
-C:/Users/Chris/Desktop/Roam/Roam_VCU/RTT/SEGGER_RTT_Conf.h:
+C:/Users/h1576/Desktop/Roam/Roam_VCU/RTT/SEGGER_RTT.h:
+C:/Users/h1576/Desktop/Roam/Roam_VCU/RTT/SEGGER_RTT_Conf.h:

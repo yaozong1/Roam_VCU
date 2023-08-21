@@ -31,17 +31,18 @@ CAN_TxHeaderTypeDef TxHeader;
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define BufferSize 1000
+#define BufferSize 8
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-uint8_t TxData[8];
+uint8_t TxData[8];//CAN BUS DATA
 uint32_t TxMailbox;
 
 uint8_t txData[] = "Hello, CANOK!";  // 要发送的数据
 uint8_t txData_UART[] = "Hello, UART2!";  // 要发送的数据
 uint8_t rxData[BufferSize];
+uint8_t rxData_cmp[] = {'b', 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -80,11 +81,11 @@ static void MX_RTC_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	TxHeader.StdId = 0x123;
+	TxHeader.StdId = 0x01;
 	TxHeader.DLC = 8;                 // 数据长度�??????? 8 字节
 	TxHeader.IDE = CAN_ID_STD;        // 使用标准标识�???????
 	TxHeader.RTR = CAN_RTR_DATA;      // 数据�???????
-	TxData[0] = 0xAA;                 // 设置发�?�数�???????
+
 
   /* USER CODE END 1 */
 
@@ -132,15 +133,90 @@ int main(void)
 	  HAL_Delay(100);
 	  HAL_UART_Transmit(&huart2, rxData, sizeof(rxData), 1000);
 */
-	  HAL_UART_Receive(&huart2, rxData, BufferSize, 3000);
+	  /*
+	 if ( HAL_UART_Receive(&huart2, rxData, BufferSize, 3000)== HAL_OK)
+	 {
+		 SEGGER_RTT_printf(0, "uart2: %s\r\n", rxData);
 
+	 }
+	 if ( memcmp(rxData,rxData_cmp,sizeof(rxData_cmp)) == 0 )
+	{
+		 SEGGER_RTT_printf(0, "Received sync from NRF");
+	}
+	 */
+
+	  /*
+	  do  {
+	  memset(rxData, 0, BufferSize);
+	  HAL_UART_Receive(&huart2, rxData, BufferSize, 1000);
+	  rxData[BufferSize - 1] = '\0'; // 添加字符串终止符
+	  SEGGER_RTT_printf(0, "Uart2_F_DATA IS :%s\r\n", rxData);
+           } while(0);
+
+	  */
+
+	  do{
+      // 等待接收数据，超时时间为 1000 毫秒
+	  memset(rxData, 0, BufferSize);
+      HAL_StatusTypeDef status = HAL_UART_Receive(&huart2, rxData, BufferSize, 1000);
+      //rxData[BufferSize - 1] = '\0'; // 添加字符串终止符
+
+      // 检查接收状态
+      if (status == HAL_OK) {
+          // 成功接收到数据
+
+          // 在这里添加代码来处理接收到的数据
+          // 你可以使用 printf 或其他方式将接收到的数据显示出来
+
+
+    	  int dataSize = sizeof(rxData);
+
+    	  SEGGER_RTT_printf(0, "Uart2 DATA IS: ");
+    	  for (int i = 0; i < dataSize; i++) {
+    	      SEGGER_RTT_printf(0, "%02X ", rxData[i]);
+    	  }
+    	  SEGGER_RTT_printf(0, "\r\n");
+
+    	    if (rxData[0] == 'c') {
+    	        // 接收到了期望的字符串
+    	    	SEGGER_RTT_printf(0, "GET THE Result DATA from NRF\r\n");
+    	    	memcpy(TxData, rxData, 8);//把从nrf收过来的数据用CAN发送到ESP32
+
+    	    	       if (HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox) == HAL_OK) {
+
+    	    			  SEGGER_RTT_printf(0, "CAN_SENT OUT\r\n");
+
+    	    		                                                                              }
+
+    	    }
+
+
+      } else if (status == HAL_TIMEOUT) {
+          // 超时，未接收到数据
+    	  HAL_UART_Transmit(&huart2, txData, sizeof(txData), 1000);
+    	  SEGGER_RTT_printf(0, "Uart2_LOOP DATA IS timeout \r\n");
+          // 在这里可以添加适当的处理代码
+      } else {
+          // 发生错误
+    	  SEGGER_RTT_printf(0, "Uart2_LOOP DATA IS error \r\n");
+          // 在这里可以添加适当的错误处理代码
+      }
+  }while(1);
+
+
+
+
+
+
+
+	  /*
 	  if (HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox) == HAL_OK) {
 		  HAL_UART_Transmit(&huart2, txData, sizeof(txData), 1000);
-		  SEGGER_RTT_printf(0, "uart2: %s\r\n", rxData);
+		  SEGGER_RTT_printf(0, "Uart2 DATA IS :%s\r\n", rxData);
 
 	  }
-
-	  HAL_Delay(500);  // 延迟 1000 毫秒，即 1 �???????
+*/
+//	  HAL_Delay(100);  // 延迟 1000 毫秒，即 1 �???????
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
