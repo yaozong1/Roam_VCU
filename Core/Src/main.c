@@ -107,19 +107,22 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_CAN1_Init();
-  MX_TIM1_Init();
-  MX_USART2_UART_Init();
+//  MX_CAN1_Init();
+//  MX_TIM1_Init();
+//  MX_USART2_UART_Init();
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
+  //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
+
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
+       ;
 	  /*
 	  if (HAL_UART_Transmit(&huart2, txData_UART, sizeof(txData_UART), 1000) == HAL_OK) {
 	      // 发�?�成�???????
@@ -154,7 +157,7 @@ int main(void)
            } while(0);
 
 	  */
-
+	  /*
 	  do{
       // 等待接收数据，超时时间为 1000 毫秒
 	  memset(rxData, 0, BufferSize);
@@ -203,7 +206,7 @@ int main(void)
       }
   }while(1);
 
-
+*/
 
 
 
