@@ -18,9 +18,10 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "SEGGER_RTT.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdbool.h>
 
 /* USER CODE END Includes */
 
@@ -82,9 +83,9 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 	TxHeader.StdId = 0x01;
-	TxHeader.DLC = 8;                 // 数据长度�??????? 8 字节
-	TxHeader.IDE = CAN_ID_STD;        // 使用标准标识�???????
-	TxHeader.RTR = CAN_RTR_DATA;      // 数据�???????
+	TxHeader.DLC = 8;                 // 数据长度�????????? 8 字节
+	TxHeader.IDE = CAN_ID_STD;        // 使用标准标识�?????????
+	TxHeader.RTR = CAN_RTR_DATA;      // 数据�?????????
 
 
   /* USER CODE END 1 */
@@ -107,9 +108,9 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-//  MX_CAN1_Init();
-//  MX_TIM1_Init();
-//  MX_USART2_UART_Init();
+  MX_CAN1_Init();
+  MX_TIM1_Init();
+  MX_USART2_UART_Init();
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
   //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
@@ -122,14 +123,22 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  static bool PB8_IO_IN = 0;
+
+	  do{
+		  PB8_IO_IN = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8);
+		  HAL_Delay(1000);
+		  SEGGER_RTT_printf(0, "PB8 Voltage: %d\r\n", (int)PB8_IO_IN);
+
+	  }while(1);
        ;
 	  /*
 	  if (HAL_UART_Transmit(&huart2, txData_UART, sizeof(txData_UART), 1000) == HAL_OK) {
-	      // 发�?�成�???????
+	      // 发�?�成�?????????
 	  }
 	  */
 /*
-	  HAL_Delay(100);  // 延迟 1000 毫秒，即 1 �???????
+	  HAL_Delay(100);  // 延迟 1000 毫秒，即 1 �?????????
 	  HAL_UART_Receive(&huart2, rxData, BufferSize, 3000);
 	  HAL_Delay(100);
 	  SEGGER_RTT_printf(0, rxData);
@@ -164,12 +173,12 @@ int main(void)
       HAL_StatusTypeDef status = HAL_UART_Receive(&huart2, rxData, BufferSize, 1000);
       //rxData[BufferSize - 1] = '\0'; // 添加字符串终止符
 
-      // 检查接收状态
+      // �??查接收状�??
       if (status == HAL_OK) {
-          // 成功接收到数据
+          // 成功接收到数�??
 
           // 在这里添加代码来处理接收到的数据
-          // 你可以使用 printf 或其他方式将接收到的数据显示出来
+          // 你可以使�?? printf 或其他方式将接收到的数据显示出来
 
 
     	  int dataSize = sizeof(rxData);
@@ -183,7 +192,7 @@ int main(void)
     	    if (rxData[0] == 'c') {
     	        // 接收到了期望的字符串
     	    	SEGGER_RTT_printf(0, "GET THE Result DATA from NRF\r\n");
-    	    	memcpy(TxData, rxData, 8);//把从nrf收过来的数据用CAN发送到ESP32
+    	    	memcpy(TxData, rxData, 8);//把从nrf收过来的数据用CAN发�?�到ESP32
 
     	    	       if (HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox) == HAL_OK) {
 
@@ -195,14 +204,14 @@ int main(void)
 
 
       } else if (status == HAL_TIMEOUT) {
-          // 超时，未接收到数据
+          // 超时，未接收到数�??
     	  HAL_UART_Transmit(&huart2, txData, sizeof(txData), 1000);
     	  SEGGER_RTT_printf(0, "Uart2_LOOP DATA IS timeout \r\n");
-          // 在这里可以添加适当的处理代码
+          // 在这里可以添加�?�当的处理代�??
       } else {
           // 发生错误
     	  SEGGER_RTT_printf(0, "Uart2_LOOP DATA IS error \r\n");
-          // 在这里可以添加适当的错误处理代码
+          // 在这里可以添加�?�当的错误处理代�??
       }
   }while(1);
 
@@ -219,7 +228,7 @@ int main(void)
 
 	  }
 */
-//	  HAL_Delay(100);  // 延迟 1000 毫秒，即 1 �???????
+//	  HAL_Delay(100);  // 延迟 1000 毫秒，即 1 �?????????
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -475,6 +484,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PB8 */
+  GPIO_InitStruct.Pin = GPIO_PIN_8;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
