@@ -18,10 +18,10 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "SEGGER_RTT.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "SEGGER_RTT.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -52,7 +52,7 @@ RTC_HandleTypeDef hrtc;
 
 TIM_HandleTypeDef htim1;
 
-UART_HandleTypeDef huart2;
+UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
 
@@ -63,8 +63,8 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_CAN1_Init(void);
 static void MX_TIM1_Init(void);
-static void MX_USART2_UART_Init(void);
 static void MX_RTC_Init(void);
+static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -82,9 +82,9 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 	TxHeader.StdId = 0x01;
-	TxHeader.DLC = 8;                 // 数据长度�??????? 8 字节
-	TxHeader.IDE = CAN_ID_STD;        // 使用标准标识�???????
-	TxHeader.RTR = CAN_RTR_DATA;      // 数据�???????
+	TxHeader.DLC = 8;                 // 数据长度�???????? 8 字节
+	TxHeader.IDE = CAN_ID_STD;        // 使用标准标识�????????
+	TxHeader.RTR = CAN_RTR_DATA;      // 数据�????????
 
 
   /* USER CODE END 1 */
@@ -109,8 +109,8 @@ int main(void)
   MX_GPIO_Init();
   MX_CAN1_Init();
   MX_TIM1_Init();
-  MX_USART2_UART_Init();
   MX_RTC_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
   /* USER CODE END 2 */
@@ -120,58 +120,28 @@ int main(void)
   while (1)
   {
 
-	  /*
-	  if (HAL_UART_Transmit(&huart2, txData_UART, sizeof(txData_UART), 1000) == HAL_OK) {
-	      // 发�?�成�???????
-	  }
-	  */
-/*
-	  HAL_Delay(100);  // 延迟 1000 毫秒，即 1 �???????
-	  HAL_UART_Receive(&huart2, rxData, BufferSize, 3000);
-	  HAL_Delay(100);
-	  SEGGER_RTT_printf(0, rxData);
-	  HAL_Delay(100);
-	  HAL_UART_Transmit(&huart2, rxData, sizeof(rxData), 1000);
-*/
-	  /*
-	 if ( HAL_UART_Receive(&huart2, rxData, BufferSize, 3000)== HAL_OK)
-	 {
-		 SEGGER_RTT_printf(0, "uart2: %s\r\n", rxData);
 
-	 }
-	 if ( memcmp(rxData,rxData_cmp,sizeof(rxData_cmp)) == 0 )
-	{
-		 SEGGER_RTT_printf(0, "Received sync from NRF");
-	}
-	 */
 
-	  /*
-	  do  {
-	  memset(rxData, 0, BufferSize);
-	  HAL_UART_Receive(&huart2, rxData, BufferSize, 1000);
-	  rxData[BufferSize - 1] = '\0'; // 添加字符串终止符
-	  SEGGER_RTT_printf(0, "Uart2_F_DATA IS :%s\r\n", rxData);
-           } while(0);
 
-	  */
+
 
 	  do{
       // 等待接收数据，超时时间为 1000 毫秒
 	  memset(rxData, 0, BufferSize);
-      HAL_StatusTypeDef status = HAL_UART_Receive(&huart2, rxData, BufferSize, 1000);
+      HAL_StatusTypeDef status = HAL_UART_Receive(&huart1, rxData, BufferSize, 1000);
       //rxData[BufferSize - 1] = '\0'; // 添加字符串终止符
 
-      // 检查接收状态
+      // �?查接收状�?
       if (status == HAL_OK) {
-          // 成功接收到数据
+          // 成功接收到数�?
 
           // 在这里添加代码来处理接收到的数据
-          // 你可以使用 printf 或其他方式将接收到的数据显示出来
+          // 你可以使�? printf 或其他方式将接收到的数据显示出来
 
 
     	  int dataSize = sizeof(rxData);
 
-    	  SEGGER_RTT_printf(0, "Uart2 DATA IS: ");
+    	  SEGGER_RTT_printf(0, "Uart1 DATA IS: ");
     	  for (int i = 0; i < dataSize; i++) {
     	      SEGGER_RTT_printf(0, "%02X ", rxData[i]);
     	  }
@@ -180,7 +150,7 @@ int main(void)
     	    if (rxData[0] == 'c') {
     	        // 接收到了期望的字符串
     	    	SEGGER_RTT_printf(0, "GET THE Result DATA from NRF\r\n");
-    	    	memcpy(TxData, rxData, 8);//把从nrf收过来的数据用CAN发送到ESP32
+    	    	memcpy(TxData, rxData, 8);//把从nrf收过来的数据用CAN发�?�到ESP32
 
     	    	       if (HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox) == HAL_OK) {
 
@@ -192,14 +162,14 @@ int main(void)
 
 
       } else if (status == HAL_TIMEOUT) {
-          // 超时，未接收到数据
-    	  HAL_UART_Transmit(&huart2, txData, sizeof(txData), 1000);
-    	  SEGGER_RTT_printf(0, "Uart2_LOOP DATA IS timeout \r\n");
-          // 在这里可以添加适当的处理代码
+          // 超时，未接收到数�?
+    	  HAL_UART_Transmit(&huart1, txData, sizeof(txData), 1000);
+    	  SEGGER_RTT_printf(0, "Uart1_LOOP DATA IS timeout \r\n");
+          // 在这里可以添加�?�当的处理代�?
       } else {
           // 发生错误
-    	  SEGGER_RTT_printf(0, "Uart2_LOOP DATA IS error \r\n");
-          // 在这里可以添加适当的错误处理代码
+    	  SEGGER_RTT_printf(0, "Uart1_LOOP DATA IS error \r\n");
+          // 在这里可以添加�?�当的错误处理代�?
       }
   }while(1);
 
@@ -209,14 +179,8 @@ int main(void)
 
 
 
-	  /*
-	  if (HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox) == HAL_OK) {
-		  HAL_UART_Transmit(&huart2, txData, sizeof(txData), 1000);
-		  SEGGER_RTT_printf(0, "Uart2 DATA IS :%s\r\n", rxData);
 
-	  }
-*/
-//	  HAL_Delay(100);  // 延迟 1000 毫秒，即 1 �???????
+//	  HAL_Delay(100);  // 延迟 1000 毫秒，即 1 �????????
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -416,35 +380,35 @@ static void MX_TIM1_Init(void)
 }
 
 /**
-  * @brief USART2 Initialization Function
+  * @brief USART1 Initialization Function
   * @param None
   * @retval None
   */
-static void MX_USART2_UART_Init(void)
+static void MX_USART1_UART_Init(void)
 {
 
-  /* USER CODE BEGIN USART2_Init 0 */
+  /* USER CODE BEGIN USART1_Init 0 */
 
-  /* USER CODE END USART2_Init 0 */
+  /* USER CODE END USART1_Init 0 */
 
-  /* USER CODE BEGIN USART2_Init 1 */
+  /* USER CODE BEGIN USART1_Init 1 */
 
-  /* USER CODE END USART2_Init 1 */
-  huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
-  huart2.Init.WordLength = UART_WORDLENGTH_8B;
-  huart2.Init.StopBits = UART_STOPBITS_1;
-  huart2.Init.Parity = UART_PARITY_NONE;
-  huart2.Init.Mode = UART_MODE_TX_RX;
-  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_UART_Init(&huart2) != HAL_OK)
+  /* USER CODE END USART1_Init 1 */
+  huart1.Instance = USART1;
+  huart1.Init.BaudRate = 115200;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+  huart1.Init.StopBits = UART_STOPBITS_1;
+  huart1.Init.Parity = UART_PARITY_NONE;
+  huart1.Init.Mode = UART_MODE_TX_RX;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart1) != HAL_OK)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN USART2_Init 2 */
+  /* USER CODE BEGIN USART1_Init 2 */
 
-  /* USER CODE END USART2_Init 2 */
+  /* USER CODE END USART1_Init 2 */
 
 }
 
