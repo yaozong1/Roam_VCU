@@ -198,6 +198,10 @@ int main(void)
 	  do{
       // 等待接收数据，超时时间为 1000 毫秒
 	  memset(rxData_ESP, 0, BufferSize_ESP);
+
+	  HAL_UART_Transmit(&huart3, rxData_cmp, sizeof(rxData_cmp), 1000);//发东西过去确认
+	  HAL_Delay(1000);
+
       HAL_StatusTypeDef status = HAL_UART_Receive(&huart3, rxData_ESP, BufferSize_ESP, 3000);
       //rxData[BufferSize - 1] = '\0'; // 添加字符串终止符
 
@@ -221,7 +225,6 @@ int main(void)
 
       } else if (status == HAL_TIMEOUT) {
           // 超时，未接收到数�???
-    	  HAL_UART_Transmit(&huart1, txData, sizeof(txData), 1000);
     	  SEGGER_RTT_printf(0, "Uart3_LOOP DATA IS timeout \r\n");
           // 在这里可以添加�?�当的处理代�???
       } else {
