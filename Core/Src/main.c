@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include <stdbool.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -31,8 +32,9 @@ CAN_TxHeaderTypeDef TxHeader;
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define BufferSize 8
+#define BufferSize 30
 #define BufferSize_ESP 20
+#define BufferSize_Sync 30
 // CS宏定�?
 #define W25N512_CS_LOW()     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET)
 #define W25N512_CS_HIGH()    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET)
@@ -51,7 +53,8 @@ uint8_t txData[] = "Hello, CANOK!";  // 要发送的数据
 uint8_t txData_UART[] = "Hello, UART2!";  // 要发送的数据
 uint8_t rxData[BufferSize];
 uint8_t rxData_ESP[BufferSize_ESP];
-uint8_t rxData_cmp[] = {'b', 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
+uint8_t txData_ESP[BufferSize_Sync];
+uint8_t rxData_cmp[] = {'f', 0x01, 0x02};
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -141,22 +144,21 @@ int main(void)
 
 	  SEGGER_RTT_printf(0, "DEVICEID = %06X ", deviceID);
 
+	  static bool uart1_pend = true;
 
-
-
-	  do{
-      // 等待接收数据，超时时间为 1000 毫秒
+	  //-------------------------------------------------USART1 ---------------------------------------------------//
+  while(uart1_pend){
+      // 等待接收数据，超时时间为 1000 毫秒，接收之前先清除所有的缓存
 	  memset(rxData, 0, BufferSize);
-      HAL_StatusTypeDef status = HAL_UART_Receive(&huart1, rxData, BufferSize, 1000);
+
+      HAL_StatusTypeDef status = HAL_UART_Receive(&huart1, rxData, BufferSize, 5000);
       //rxData[BufferSize - 1] = '\0'; // 添加字符串终止符
 
       // �???查接收状�???
       if (status == HAL_OK) {
           // 成功接收到数�???
-
           // 在这里添加代码来处理接收到的数据
           // 你可以使�??? printf 或其他方式将接收到的数据显示出来
-
 
     	  int dataSize = sizeof(rxData);
 
@@ -174,15 +176,13 @@ int main(void)
     	    	       if (HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox) == HAL_OK) {
 
     	    			  SEGGER_RTT_printf(0, "CAN_SENT OUT\r\n");
-
     	    		                                                                              }
-
-    	    }
+    	                         }
 
 
       } else if (status == HAL_TIMEOUT) {
           // 超时，未接收到数�???
-    	  HAL_UART_Transmit(&huart1, txData, sizeof(txData), 1000);
+    	  //HAL_UART_Transmit(&huart1, txData, sizeof(txData), 1000);
     	  SEGGER_RTT_printf(0, "Uart1_LOOP DATA IS timeout \r\n");
           // 在这里可以添加�?�当的处理代�???
       } else {
@@ -190,19 +190,40 @@ int main(void)
     	  SEGGER_RTT_printf(0, "Uart1_LOOP DATA IS error \r\n");
           // 在这里可以添加�?�当的错误处理代�???
       }
-  }while(0);
 
 
+	  if(rxData[0] != 'c' || rxData[BufferSize-1]!='s')
+	  {
+      while(__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE)) {
+    	      SEGGER_RTT_printf(0, "Cleaning buffer for uart1");
+		      uint8_t dummy;
+		      HAL_UART_Receive(&huart1, &dummy, 1, 100);
+		    }
+	  }
+	  if(rxData[0] == 'c' || rxData[BufferSize-1]=='s')
+	  {
+		  uart1_pend = false;
+
+		  memcpy(txData_ESP, rxData, sizeof(rxData));
+		  SEGGER_RTT_printf(0, "tx0 = %s \r\n", txData_ESP[0]);
+		  SEGGER_RTT_printf(0, "tx29 = %s \r\n", txData_ESP[29]);
+		  SEGGER_RTT_printf(0, "GET the right data from NRF");
+	  }
+
+  }
+//-------------------------------------------------USART1 ---------------------------------------------------//
+
+//两者之间的timeout现在是匹配好了
+
+//--------------------------------------------------USART3--------------------------------------------//
 //uint8_t rxData_ESP[BufferSize_ESP];
 
 	  do{
+
       // 等待接收数据，超时时间为 1000 毫秒
 	  memset(rxData_ESP, 0, BufferSize_ESP);
 
-	  HAL_UART_Transmit(&huart3, rxData_cmp, sizeof(rxData_cmp), 1000);//发东西过去确认
-	  HAL_Delay(1000);
-
-      HAL_StatusTypeDef status = HAL_UART_Receive(&huart3, rxData_ESP, BufferSize_ESP, 3000);
+      HAL_StatusTypeDef status = HAL_UART_Receive(&huart3, rxData_ESP, BufferSize_ESP, 1000);
       //rxData[BufferSize - 1] = '\0'; // 添加字符串终止符
 
       // �???查接收状�???
@@ -221,9 +242,24 @@ int main(void)
     	  }
     	  SEGGER_RTT_printf(0, "\r\n");
 
+  	    if (rxData_ESP[0] == 'f'&& rxData_ESP[19] == 0x77) {
+  	        // 接收到了期望的字符串
+  	    	SEGGER_RTT_printf(0, "GET THE Final confirm from ESP32\r\n");
+  	    	HAL_Delay(1000);
+
+  	    	//memcpy(TxData, rxData, 8);//把从nrf收过来的数据用CAN发�?�到ESP32
+
+  	    	       if (HAL_UART_Transmit(&huart3, txData_ESP, sizeof(txData_ESP), 2000) == HAL_OK) {
+
+  	    			  SEGGER_RTT_printf(0, "IMEI&DEVICE ID_SENT OUT\r\n");
+                                                           }
+
+  	                         }
+
+                            }
 
 
-      } else if (status == HAL_TIMEOUT) {
+        else if (status == HAL_TIMEOUT) {
           // 超时，未接收到数�???
     	  SEGGER_RTT_printf(0, "Uart3_LOOP DATA IS timeout \r\n");
           // 在这里可以添加�?�当的处理代�???
@@ -232,9 +268,10 @@ int main(void)
     	  SEGGER_RTT_printf(0, "Uart3_LOOP DATA IS error \r\n");
           // 在这里可以添加�?�当的错误处理代�???
       }
+      HAL_Delay(10);
   }while(0);
 
-
+	  //--------------------------------------------------USART3--------------------------------------------//
 
 
 
