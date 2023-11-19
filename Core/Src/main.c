@@ -135,6 +135,7 @@ int main(void)
 
   uint8_t deviceID = W25N512GVEIG_ReadDeviceID();
 
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -171,6 +172,14 @@ int main(void)
     	    if (rxData[0] == 'c') {
     	        // 接收到了期望的字符串
     	    	SEGGER_RTT_printf(0, "GET THE Result DATA from NRF\r\n");
+
+    	    	  if (deviceID == 0x20)
+    	    			  {
+    	    		  SEGGER_RTT_printf(0, "Get the right Device ID \r\n");
+    	    		  rxData[7] = 0x11; //把VCU的flash结果也加上
+    //'c''modem result''sim result' 'aliyun result' 'motion result' 'nrfflash res' ''canbus result' 'vcu flash res'
+    	    			  }
+
     	    	memcpy(TxData, rxData, 8);//把从nrf收过来的数据用CAN发�?�到ESP32
 
     	    	       if (HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox) == HAL_OK) {
