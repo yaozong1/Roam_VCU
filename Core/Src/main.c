@@ -185,7 +185,7 @@ int main(void)
     	    	  if (deviceID == 0x20)
     	    			  {
     	    		  SEGGER_RTT_printf(0, "Get the right Device ID \r\n");
-    	    		  rxData[7] = 0x11; //把VCU的flash结果也加�?
+    	    		  rxData[7] = 0x50; //把VCU的flash结果也加�?
     //'c''modem result''sim result' 'aliyun result' 'motion result' 'nrfflash res' ''canbus result' 'vcu flash res'
     	    			  }
 
