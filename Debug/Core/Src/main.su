@@ -7,5 +7,5 @@
 ../Core/Src/main.c:556:13:MX_USART1_UART_Init	8	static
 ../Core/Src/main.c:589:13:MX_USART3_UART_Init	8	static
 ../Core/Src/main.c:622:13:MX_GPIO_Init	40	static
-../Core/Src/main.c:661:9:W25N512GVEIG_ReadDeviceID	16	static
-../Core/Src/main.c:686:6:Error_Handler	4	static,ignoring_inline_asm
+../Core/Src/main.c:677:9:W25N512GVEIG_ReadDeviceID	16	static
+../Core/Src/main.c:702:6:Error_Handler	4	static,ignoring_inline_asm

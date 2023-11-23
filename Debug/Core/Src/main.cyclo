@@ -7,5 +7,5 @@ main.c:510:13:MX_TIM1_Init	4
 main.c:556:13:MX_USART1_UART_Init	2
 main.c:589:13:MX_USART3_UART_Init	2
 main.c:622:13:MX_GPIO_Init	1
-main.c:661:9:W25N512GVEIG_ReadDeviceID	1
-main.c:686:6:Error_Handler	1
+main.c:677:9:W25N512GVEIG_ReadDeviceID	1
+main.c:702:6:Error_Handler	1
