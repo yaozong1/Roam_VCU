@@ -35,7 +35,7 @@ CAN_TxHeaderTypeDef TxHeader;
 #define BufferSize 30
 #define BufferSize_ESP 20
 #define BufferSize_Sync 30
-// CS宏定�??
+// CS宏定�???
 #define W25N512_CS_LOW()     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET)
 #define W25N512_CS_HIGH()    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET)
 
@@ -99,9 +99,9 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 	TxHeader.StdId = 0x01;
-	TxHeader.DLC = 8;                 // 数据长度�??????????? 8 字节
-	TxHeader.IDE = CAN_ID_STD;        // 使用标准标识�???????????
-	TxHeader.RTR = CAN_RTR_DATA;      // 数据�???????????
+	TxHeader.DLC = 8;                 // 数据长度�???????????? 8 字节
+	TxHeader.IDE = CAN_ID_STD;        // 使用标准标识�????????????
+	TxHeader.RTR = CAN_RTR_DATA;      // 数据�????????????
 
 
   /* USER CODE END 1 */
@@ -158,17 +158,17 @@ int main(void)
 
 	  //-------------------------------------------------USART1 ---------------------------------------------------//
   while(uart1_pend){
-      // 等待接收数据，超时时间为 1000 毫秒，接收之前先清除�?有的缓存
+      // 等待接收数据，超时时间为 1000 毫秒，接收之前先清除�??有的缓存
 	  memset(rxData, 0, BufferSize);
 
       HAL_StatusTypeDef status = HAL_UART_Receive(&huart1, rxData, BufferSize, 5000);
       //rxData[BufferSize - 1] = '\0'; // 添加字符串终止符
 
-      // �????查接收状�????
+      // �?????查接收状�?????
       if (status == HAL_OK) {
-          // 成功接收到数�????
+          // 成功接收到数�?????
           // 在这里添加代码来处理接收到的数据
-          // 你可以使�???? printf 或其他方式将接收到的数据显示出来
+          // 你可以使�????? printf 或其他方式将接收到的数据显示出来
 
     	  int dataSize = sizeof(rxData);
 
@@ -185,7 +185,7 @@ int main(void)
     	    	  if (deviceID == 0x20)
     	    			  {
     	    		  SEGGER_RTT_printf(0, "Get the right Device ID \r\n");
-    	    		  rxData[7] = 0x50; //把VCU的flash结果也加�?
+    	    		  rxData[7] = 0x50; //把VCU的flash结果也加�??
     //'c''modem result''sim result' 'aliyun result' 'motion result' 'nrfflash res' ''canbus result' 'vcu flash res'
     	    			  }
 
@@ -199,14 +199,14 @@ int main(void)
 
 
       } else if (status == HAL_TIMEOUT) {
-          // 超时，未接收到数�????
+          // 超时，未接收到数�?????
     	  //HAL_UART_Transmit(&huart1, txData, sizeof(txData), 1000);
     	  SEGGER_RTT_printf(0, "Uart1_LOOP DATA IS timeout \r\n");
-          // 在这里可以添加�?�当的处理代�????
+          // 在这里可以添加�?�当的处理代�?????
       } else {
           // 发生错误
     	  SEGGER_RTT_printf(0, "Uart1_LOOP DATA IS error \r\n");
-          // 在这里可以添加�?�当的错误处理代�????
+          // 在这里可以添加�?�当的错误处理代�?????
       }
 
 
@@ -231,7 +231,7 @@ int main(void)
   }
 //-------------------------------------------------USART1 ---------------------------------------------------//
 
-//两�?�之间的timeout现在是匹配好�?
+//两�?�之间的timeout现在是匹配好�??
 
 //--------------------------------------------------USART3--------------------------------------------//
 //uint8_t rxData_ESP[BufferSize_ESP];
@@ -244,12 +244,12 @@ int main(void)
       HAL_StatusTypeDef status = HAL_UART_Receive(&huart3, rxData_ESP, BufferSize_ESP, 1000);
       //rxData[BufferSize - 1] = '\0'; // 添加字符串终止符
 
-      // �????查接收状�????
+      // �?????查接收状�?????
       if (status == HAL_OK) {
-          // 成功接收到数�????
+          // 成功接收到数�?????
 
           // 在这里添加代码来处理接收到的数据
-          // 你可以使�???? printf 或其他方式将接收到的数据显示出来
+          // 你可以使�????? printf 或其他方式将接收到的数据显示出来
 
     	  IGN_PA0_O_second = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);
     	  HAL_Delay(10);
@@ -295,13 +295,13 @@ int main(void)
 
 
         else if (status == HAL_TIMEOUT) {
-          // 超时，未接收到数�????
+          // 超时，未接收到数�?????
     	  SEGGER_RTT_printf(0, "Uart3_LOOP DATA IS timeout \r\n");
-          // 在这里可以添加�?�当的处理代�????
+          // 在这里可以添加�?�当的处理代�?????
       } else {
           // 发生错误
     	  SEGGER_RTT_printf(0, "Uart3_LOOP DATA IS error \r\n");
-          // 在这里可以添加�?�当的错误处理代�????
+          // 在这里可以添加�?�当的错误处理代�?????
       }
       HAL_Delay(10);
   }while(0);
@@ -311,7 +311,7 @@ int main(void)
 
 
 
-//	  HAL_Delay(100);  // 延迟 1000 毫秒，即 1 �???????????
+//	  HAL_Delay(100);  // 延迟 1000 毫秒，即 1 �????????????
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -673,7 +673,7 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
-// 从W25N512GVEIG读取DEVICE ID的函�??
+// 从W25N512GVEIG读取DEVICE ID的函�???
 uint8_t W25N512GVEIG_ReadDeviceID(void)
 {
     uint8_t device_id[4];

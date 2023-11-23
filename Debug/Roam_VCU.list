@@ -366,15 +366,15 @@ int main(void)
  8000532:	4b99      	ldr	r3, [pc, #612]	; (8000798 <main+0x26c>)
  8000534:	2201      	movs	r2, #1
  8000536:	601a      	str	r2, [r3, #0]
-	TxHeader.DLC = 8;                 // 数据长度�??????????? 8 字节
+	TxHeader.DLC = 8;                 // 数据长度�???????????? 8 字节
  8000538:	4b97      	ldr	r3, [pc, #604]	; (8000798 <main+0x26c>)
  800053a:	2208      	movs	r2, #8
  800053c:	611a      	str	r2, [r3, #16]
-	TxHeader.IDE = CAN_ID_STD;        // 使用标准标识�???????????
+	TxHeader.IDE = CAN_ID_STD;        // 使用标准标识�????????????
  800053e:	4b96      	ldr	r3, [pc, #600]	; (8000798 <main+0x26c>)
  8000540:	2200      	movs	r2, #0
  8000542:	609a      	str	r2, [r3, #8]
-	TxHeader.RTR = CAN_RTR_DATA;      // 数据�???????????
+	TxHeader.RTR = CAN_RTR_DATA;      // 数据�????????????
  8000544:	4b94      	ldr	r3, [pc, #592]	; (8000798 <main+0x26c>)
  8000546:	2200      	movs	r2, #0
  8000548:	60da      	str	r2, [r3, #12]
@@ -475,7 +475,7 @@ int main(void)
 	  //-------------------------------------------------USART1 ---------------------------------------------------//
   while(uart1_pend){
  80005cc:	e0a0      	b.n	8000710 <main+0x1e4>
-      // 等待接收数据，超时时间为 1000 毫秒，接收之前先清除�?有的缓存
+      // 等待接收数据，超时时间为 1000 毫秒，接收之前先清除�??有的缓存
 	  memset(rxData, 0, BufferSize);
  80005ce:	221e      	movs	r2, #30
  80005d0:	2100      	movs	r1, #0
@@ -492,14 +492,14 @@ int main(void)
  80005e8:	73fb      	strb	r3, [r7, #15]
       //rxData[BufferSize - 1] = '\0'; // 添加字符串终止符
 
-      // �????查接收状�????
+      // �?????查接收状�?????
       if (status == HAL_OK) {
  80005ea:	7bfb      	ldrb	r3, [r7, #15]
  80005ec:	2b00      	cmp	r3, #0
  80005ee:	d142      	bne.n	8000676 <main+0x14a>
-          // 成功接收到数�????
+          // 成功接收到数�?????
           // 在这里添加代码来处理接收到的数据
-          // 你可以使�???? printf 或其他方式将接收到的数据显示出来
+          // 你可以使�????? printf 或其他方式将接收到的数据显示出来
 
     	  int dataSize = sizeof(rxData);
  80005f0:	231e      	movs	r3, #30
@@ -556,7 +556,7 @@ int main(void)
  8000640:	4962      	ldr	r1, [pc, #392]	; (80007cc <main+0x2a0>)
  8000642:	2000      	movs	r0, #0
  8000644:	f004 fe30 	bl	80052a8 <SEGGER_RTT_printf>
-    	    		  rxData[7] = 0x50; //把VCU的flash结果也加�?
+    	    		  rxData[7] = 0x50; //把VCU的flash结果也加�??
  8000648:	4b5a      	ldr	r3, [pc, #360]	; (80007b4 <main+0x288>)
  800064a:	2250      	movs	r2, #80	; 0x50
  800064c:	71da      	strb	r2, [r3, #7]
@@ -592,21 +592,21 @@ int main(void)
  8000676:	7bfb      	ldrb	r3, [r7, #15]
  8000678:	2b03      	cmp	r3, #3
  800067a:	d104      	bne.n	8000686 <main+0x15a>
-          // 超时，未接收到数�????
+          // 超时，未接收到数�?????
     	  //HAL_UART_Transmit(&huart1, txData, sizeof(txData), 1000);
     	  SEGGER_RTT_printf(0, "Uart1_LOOP DATA IS timeout \r\n");
  800067c:	4958      	ldr	r1, [pc, #352]	; (80007e0 <main+0x2b4>)
  800067e:	2000      	movs	r0, #0
  8000680:	f004 fe12 	bl	80052a8 <SEGGER_RTT_printf>
  8000684:	e003      	b.n	800068e <main+0x162>
-          // 在这里可以添加�?�当的处理代�????
+          // 在这里可以添加�?�当的处理代�?????
       } else {
           // 发生错误
     	  SEGGER_RTT_printf(0, "Uart1_LOOP DATA IS error \r\n");
  8000686:	4957      	ldr	r1, [pc, #348]	; (80007e4 <main+0x2b8>)
  8000688:	2000      	movs	r0, #0
  800068a:	f004 fe0d 	bl	80052a8 <SEGGER_RTT_printf>
-          // 在这里可以添加�?�当的错误处理代�????
+          // 在这里可以添加�?�当的错误处理代�?????
       }
 
 
@@ -711,15 +711,15 @@ int main(void)
  8000734:	753b      	strb	r3, [r7, #20]
       //rxData[BufferSize - 1] = '\0'; // 添加字符串终止符
 
-      // �????查接收状�????
+      // �?????查接收状�?????
       if (status == HAL_OK) {
  8000736:	7d3b      	ldrb	r3, [r7, #20]
  8000738:	2b00      	cmp	r3, #0
  800073a:	f040 80a7 	bne.w	800088c <main+0x360>
-          // 成功接收到数�????
+          // 成功接收到数�?????
 
           // 在这里添加代码来处理接收到的数据
-          // 你可以使�???? printf 或其他方式将接收到的数据显示出来
+          // 你可以使�????? printf 或其他方式将接收到的数据显示出来
 
     	  IGN_PA0_O_second = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);
  800073e:	2101      	movs	r1, #1
@@ -886,20 +886,20 @@ int main(void)
  800088c:	7d3b      	ldrb	r3, [r7, #20]
  800088e:	2b03      	cmp	r3, #3
  8000890:	d104      	bne.n	800089c <main+0x370>
-          // 超时，未接收到数�????
+          // 超时，未接收到数�?????
     	  SEGGER_RTT_printf(0, "Uart3_LOOP DATA IS timeout \r\n");
  8000892:	490f      	ldr	r1, [pc, #60]	; (80008d0 <main+0x3a4>)
  8000894:	2000      	movs	r0, #0
  8000896:	f004 fd07 	bl	80052a8 <SEGGER_RTT_printf>
  800089a:	e003      	b.n	80008a4 <main+0x378>
-          // 在这里可以添加�?�当的处理代�????
+          // 在这里可以添加�?�当的处理代�?????
       } else {
           // 发生错误
     	  SEGGER_RTT_printf(0, "Uart3_LOOP DATA IS error \r\n");
  800089c:	490d      	ldr	r1, [pc, #52]	; (80008d4 <main+0x3a8>)
  800089e:	2000      	movs	r0, #0
  80008a0:	f004 fd02 	bl	80052a8 <SEGGER_RTT_printf>
-          // 在这里可以添加�?�当的错误处理代�????
+          // 在这里可以添加�?�当的错误处理代�?????
       }
       HAL_Delay(10);
  80008a4:	200a      	movs	r0, #10
@@ -1751,7 +1751,7 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
-// 从W25N512GVEIG读取DEVICE ID的函�??
+// 从W25N512GVEIG读取DEVICE ID的函�???
 uint8_t W25N512GVEIG_ReadDeviceID(void)
 {
  8000d5c:	b580      	push	{r7, lr}
