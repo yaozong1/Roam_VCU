@@ -132,8 +132,17 @@ int main(void)
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_SET); //IMOUT 关闭
+  SEGGER_RTT_printf(0, "IMOUT CLOSED ...\r\n");
 
   uint8_t deviceID = W25N512GVEIG_ReadDeviceID();
+
+  bool IGN_PA0_O_first = 0;
+  bool IGN_PA0_O_second = 0;
+  IGN_PA0_O_first = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);
+
+  HAL_Delay(10);
+  SEGGER_RTT_printf(0, "IGN_PA0_O_first Voltage: %d\r\n", (int)IGN_PA0_O_first);
 
 
   /* USER CODE END 2 */
@@ -242,6 +251,18 @@ int main(void)
           // 在这里添加代码来处理接收到的数据
           // 你可以使�??? printf 或其他方式将接收到的数据显示出来
 
+    	  IGN_PA0_O_second = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);
+    	  HAL_Delay(10);
+    	  SEGGER_RTT_printf(0, "IGN_PA0_O_second Voltage: %d\r\n", (int)IGN_PA0_O_second);
+    	  if(IGN_PA0_O_second == 0 && IGN_PA0_O_first == 1 )
+    	  {
+    		  txData_ESP[27] = 0x50;
+    		  SEGGER_RTT_printf(0, "IGN TEST PASS \r\n");
+    	  }
+
+
+
+
 
     	  int dataSize = sizeof(rxData_ESP);
 
@@ -254,7 +275,12 @@ int main(void)
   	    if (rxData_ESP[0] == 'f'&& rxData_ESP[19] == 0x77) {
   	        // 接收到了期望的字符串
   	    	SEGGER_RTT_printf(0, "GET THE Final confirm from ESP32\r\n");
-  	    	HAL_Delay(1000);
+
+      	    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_RESET); //IMOUT 打开
+
+      	    SEGGER_RTT_printf(0, "IMOUT OPEN ...\r\n");
+
+      	    HAL_Delay(1000);
 
   	    	//memcpy(TxData, rxData, 8);//把从nrf收过来的数据用CAN发�?�到ESP32
 
