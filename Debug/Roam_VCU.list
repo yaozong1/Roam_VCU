@@ -366,15 +366,15 @@ int main(void)
  8000532:	4b99      	ldr	r3, [pc, #612]	; (8000798 <main+0x26c>)
  8000534:	2201      	movs	r2, #1
  8000536:	601a      	str	r2, [r3, #0]
-	TxHeader.DLC = 8;                 // 数据长度�???????????? 8 字节
+	TxHeader.DLC = 8;                 // 数据长度�????????????? 8 字节
  8000538:	4b97      	ldr	r3, [pc, #604]	; (8000798 <main+0x26c>)
  800053a:	2208      	movs	r2, #8
  800053c:	611a      	str	r2, [r3, #16]
-	TxHeader.IDE = CAN_ID_STD;        // 使用标准标识�????????????
+	TxHeader.IDE = CAN_ID_STD;        // 使用标准标识�?????????????
  800053e:	4b96      	ldr	r3, [pc, #600]	; (8000798 <main+0x26c>)
  8000540:	2200      	movs	r2, #0
  8000542:	609a      	str	r2, [r3, #8]
-	TxHeader.RTR = CAN_RTR_DATA;      // 数据�????????????
+	TxHeader.RTR = CAN_RTR_DATA;      // 数据�?????????????
  8000544:	4b94      	ldr	r3, [pc, #592]	; (8000798 <main+0x26c>)
  8000546:	2200      	movs	r2, #0
  8000548:	60da      	str	r2, [r3, #12]
@@ -475,7 +475,7 @@ int main(void)
 	  //-------------------------------------------------USART1 ---------------------------------------------------//
   while(uart1_pend){
  80005cc:	e0a0      	b.n	8000710 <main+0x1e4>
-      // 等待接收数据，超时时间为 1000 毫秒，接收之前先清除�??有的缓存
+      // 等待接收数据，超时时间为 1000 毫秒，接收之前先清除�???有的缓存
 	  memset(rxData, 0, BufferSize);
  80005ce:	221e      	movs	r2, #30
  80005d0:	2100      	movs	r1, #0
@@ -492,14 +492,14 @@ int main(void)
  80005e8:	73fb      	strb	r3, [r7, #15]
       //rxData[BufferSize - 1] = '\0'; // 添加字符串终止符
 
-      // �?????查接收状�?????
+      // �??????查接收状�??????
       if (status == HAL_OK) {
  80005ea:	7bfb      	ldrb	r3, [r7, #15]
  80005ec:	2b00      	cmp	r3, #0
  80005ee:	d142      	bne.n	8000676 <main+0x14a>
-          // 成功接收到数�?????
+          // 成功接收到数�??????
           // 在这里添加代码来处理接收到的数据
-          // 你可以使�????? printf 或其他方式将接收到的数据显示出来
+          // 你可以使�?????? printf 或其他方式将接收到的数据显示出来
 
     	  int dataSize = sizeof(rxData);
  80005f0:	231e      	movs	r3, #30
@@ -556,7 +556,7 @@ int main(void)
  8000640:	4962      	ldr	r1, [pc, #392]	; (80007cc <main+0x2a0>)
  8000642:	2000      	movs	r0, #0
  8000644:	f004 fe30 	bl	80052a8 <SEGGER_RTT_printf>
-    	    		  rxData[7] = 0x50; //把VCU的flash结果也加�??
+    	    		  rxData[7] = 0x50; //把VCU的flash结果也加�???
  8000648:	4b5a      	ldr	r3, [pc, #360]	; (80007b4 <main+0x288>)
  800064a:	2250      	movs	r2, #80	; 0x50
  800064c:	71da      	strb	r2, [r3, #7]
@@ -592,21 +592,21 @@ int main(void)
  8000676:	7bfb      	ldrb	r3, [r7, #15]
  8000678:	2b03      	cmp	r3, #3
  800067a:	d104      	bne.n	8000686 <main+0x15a>
-          // 超时，未接收到数�?????
+          // 超时，未接收到数�??????
     	  //HAL_UART_Transmit(&huart1, txData, sizeof(txData), 1000);
     	  SEGGER_RTT_printf(0, "Uart1_LOOP DATA IS timeout \r\n");
  800067c:	4958      	ldr	r1, [pc, #352]	; (80007e0 <main+0x2b4>)
  800067e:	2000      	movs	r0, #0
  8000680:	f004 fe12 	bl	80052a8 <SEGGER_RTT_printf>
  8000684:	e003      	b.n	800068e <main+0x162>
-          // 在这里可以添加�?�当的处理代�?????
+          // 在这里可以添加�?�当的处理代�??????
       } else {
           // 发生错误
     	  SEGGER_RTT_printf(0, "Uart1_LOOP DATA IS error \r\n");
  8000686:	4957      	ldr	r1, [pc, #348]	; (80007e4 <main+0x2b8>)
  8000688:	2000      	movs	r0, #0
  800068a:	f004 fe0d 	bl	80052a8 <SEGGER_RTT_printf>
-          // 在这里可以添加�?�当的错误处理代�?????
+          // 在这里可以添加�?�当的错误处理代�??????
       }
 
 
@@ -711,15 +711,15 @@ int main(void)
  8000734:	753b      	strb	r3, [r7, #20]
       //rxData[BufferSize - 1] = '\0'; // 添加字符串终止符
 
-      // �?????查接收状�?????
+      // �??????查接收状�??????
       if (status == HAL_OK) {
  8000736:	7d3b      	ldrb	r3, [r7, #20]
  8000738:	2b00      	cmp	r3, #0
  800073a:	f040 80a7 	bne.w	800088c <main+0x360>
-          // 成功接收到数�?????
+          // 成功接收到数�??????
 
           // 在这里添加代码来处理接收到的数据
-          // 你可以使�????? printf 或其他方式将接收到的数据显示出来
+          // 你可以使�?????? printf 或其他方式将接收到的数据显示出来
 
     	  IGN_PA0_O_second = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);
  800073e:	2101      	movs	r1, #1
@@ -886,20 +886,20 @@ int main(void)
  800088c:	7d3b      	ldrb	r3, [r7, #20]
  800088e:	2b03      	cmp	r3, #3
  8000890:	d104      	bne.n	800089c <main+0x370>
-          // 超时，未接收到数�?????
+          // 超时，未接收到数�??????
     	  SEGGER_RTT_printf(0, "Uart3_LOOP DATA IS timeout \r\n");
  8000892:	490f      	ldr	r1, [pc, #60]	; (80008d0 <main+0x3a4>)
  8000894:	2000      	movs	r0, #0
  8000896:	f004 fd07 	bl	80052a8 <SEGGER_RTT_printf>
  800089a:	e003      	b.n	80008a4 <main+0x378>
-          // 在这里可以添加�?�当的处理代�?????
+          // 在这里可以添加�?�当的处理代�??????
       } else {
           // 发生错误
     	  SEGGER_RTT_printf(0, "Uart3_LOOP DATA IS error \r\n");
  800089c:	490d      	ldr	r1, [pc, #52]	; (80008d4 <main+0x3a8>)
  800089e:	2000      	movs	r0, #0
  80008a0:	f004 fd02 	bl	80052a8 <SEGGER_RTT_printf>
-          // 在这里可以添加�?�当的错误处理代�?????
+          // 在这里可以添加�?�当的错误处理代�??????
       }
       HAL_Delay(10);
  80008a4:	200a      	movs	r0, #10
@@ -964,94 +964,93 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.LSIState = RCC_LSI_ON;
  8000914:	2301      	movs	r3, #1
  8000916:	657b      	str	r3, [r7, #84]	; 0x54
-  RCC_OscInitStruct.Prediv1Source = RCC_PREDIV1_SOURCE_HSE;
- 8000918:	2300      	movs	r3, #0
- 800091a:	63fb      	str	r3, [r7, #60]	; 0x3c
+  RCC_OscInitStruct.Prediv1Source = RCC_PREDIV1_SOURCE_PLL2;
+ 8000918:	f44f 3380 	mov.w	r3, #65536	; 0x10000
+ 800091c:	63fb      	str	r3, [r7, #60]	; 0x3c
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
- 800091c:	2302      	movs	r3, #2
- 800091e:	65bb      	str	r3, [r7, #88]	; 0x58
+ 800091e:	2302      	movs	r3, #2
+ 8000920:	65bb      	str	r3, [r7, #88]	; 0x58
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI_DIV2;
- 8000920:	2300      	movs	r3, #0
- 8000922:	65fb      	str	r3, [r7, #92]	; 0x5c
+ 8000922:	2300      	movs	r3, #0
+ 8000924:	65fb      	str	r3, [r7, #92]	; 0x5c
   RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
- 8000924:	f44f 13e0 	mov.w	r3, #1835008	; 0x1c0000
- 8000928:	663b      	str	r3, [r7, #96]	; 0x60
+ 8000926:	f44f 13e0 	mov.w	r3, #1835008	; 0x1c0000
+ 800092a:	663b      	str	r3, [r7, #96]	; 0x60
   RCC_OscInitStruct.PLL2.PLL2State = RCC_PLL_NONE;
- 800092a:	2300      	movs	r3, #0
- 800092c:	667b      	str	r3, [r7, #100]	; 0x64
+ 800092c:	2300      	movs	r3, #0
+ 800092e:	667b      	str	r3, [r7, #100]	; 0x64
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
- 800092e:	f107 0338 	add.w	r3, r7, #56	; 0x38
- 8000932:	4618      	mov	r0, r3
- 8000934:	f001 fcd0 	bl	80022d8 <HAL_RCC_OscConfig>
- 8000938:	4603      	mov	r3, r0
- 800093a:	2b00      	cmp	r3, #0
- 800093c:	d001      	beq.n	8000942 <SystemClock_Config+0x6a>
+ 8000930:	f107 0338 	add.w	r3, r7, #56	; 0x38
+ 8000934:	4618      	mov	r0, r3
+ 8000936:	f001 fccf 	bl	80022d8 <HAL_RCC_OscConfig>
+ 800093a:	4603      	mov	r3, r0
+ 800093c:	2b00      	cmp	r3, #0
+ 800093e:	d001      	beq.n	8000944 <SystemClock_Config+0x6c>
   {
     Error_Handler();
- 800093e:	f000 fa35 	bl	8000dac <Error_Handler>
+ 8000940:	f000 fa34 	bl	8000dac <Error_Handler>
   }
 
   /** Initializes the CPU, AHB and APB buses clocks
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
- 8000942:	230f      	movs	r3, #15
- 8000944:	627b      	str	r3, [r7, #36]	; 0x24
+ 8000944:	230f      	movs	r3, #15
+ 8000946:	627b      	str	r3, [r7, #36]	; 0x24
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
- 8000946:	2302      	movs	r3, #2
- 8000948:	62bb      	str	r3, [r7, #40]	; 0x28
+ 8000948:	2302      	movs	r3, #2
+ 800094a:	62bb      	str	r3, [r7, #40]	; 0x28
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
- 800094a:	2300      	movs	r3, #0
- 800094c:	62fb      	str	r3, [r7, #44]	; 0x2c
+ 800094c:	2300      	movs	r3, #0
+ 800094e:	62fb      	str	r3, [r7, #44]	; 0x2c
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
- 800094e:	2300      	movs	r3, #0
- 8000950:	633b      	str	r3, [r7, #48]	; 0x30
+ 8000950:	2300      	movs	r3, #0
+ 8000952:	633b      	str	r3, [r7, #48]	; 0x30
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
- 8000952:	2300      	movs	r3, #0
- 8000954:	637b      	str	r3, [r7, #52]	; 0x34
+ 8000954:	2300      	movs	r3, #0
+ 8000956:	637b      	str	r3, [r7, #52]	; 0x34
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
- 8000956:	f107 0324 	add.w	r3, r7, #36	; 0x24
- 800095a:	2101      	movs	r1, #1
- 800095c:	4618      	mov	r0, r3
- 800095e:	f001 ffd1 	bl	8002904 <HAL_RCC_ClockConfig>
- 8000962:	4603      	mov	r3, r0
- 8000964:	2b00      	cmp	r3, #0
- 8000966:	d001      	beq.n	800096c <SystemClock_Config+0x94>
+ 8000958:	f107 0324 	add.w	r3, r7, #36	; 0x24
+ 800095c:	2101      	movs	r1, #1
+ 800095e:	4618      	mov	r0, r3
+ 8000960:	f001 ffd0 	bl	8002904 <HAL_RCC_ClockConfig>
+ 8000964:	4603      	mov	r3, r0
+ 8000966:	2b00      	cmp	r3, #0
+ 8000968:	d001      	beq.n	800096e <SystemClock_Config+0x96>
   {
     Error_Handler();
- 8000968:	f000 fa20 	bl	8000dac <Error_Handler>
+ 800096a:	f000 fa1f 	bl	8000dac <Error_Handler>
   }
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC;
- 800096c:	2301      	movs	r3, #1
- 800096e:	607b      	str	r3, [r7, #4]
+ 800096e:	2301      	movs	r3, #1
+ 8000970:	607b      	str	r3, [r7, #4]
   PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
- 8000970:	f44f 7300 	mov.w	r3, #512	; 0x200
- 8000974:	60bb      	str	r3, [r7, #8]
+ 8000972:	f44f 7300 	mov.w	r3, #512	; 0x200
+ 8000976:	60bb      	str	r3, [r7, #8]
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
- 8000976:	1d3b      	adds	r3, r7, #4
- 8000978:	4618      	mov	r0, r3
- 800097a:	f002 f9b9 	bl	8002cf0 <HAL_RCCEx_PeriphCLKConfig>
- 800097e:	4603      	mov	r3, r0
- 8000980:	2b00      	cmp	r3, #0
- 8000982:	d001      	beq.n	8000988 <SystemClock_Config+0xb0>
+ 8000978:	1d3b      	adds	r3, r7, #4
+ 800097a:	4618      	mov	r0, r3
+ 800097c:	f002 f9b8 	bl	8002cf0 <HAL_RCCEx_PeriphCLKConfig>
+ 8000980:	4603      	mov	r3, r0
+ 8000982:	2b00      	cmp	r3, #0
+ 8000984:	d001      	beq.n	800098a <SystemClock_Config+0xb2>
   {
     Error_Handler();
- 8000984:	f000 fa12 	bl	8000dac <Error_Handler>
+ 8000986:	f000 fa11 	bl	8000dac <Error_Handler>
   }
 
   /** Configure the Systick interrupt time
   */
   __HAL_RCC_PLLI2S_ENABLE();
- 8000988:	4b03      	ldr	r3, [pc, #12]	; (8000998 <SystemClock_Config+0xc0>)
- 800098a:	2201      	movs	r2, #1
- 800098c:	601a      	str	r2, [r3, #0]
+ 800098a:	4b03      	ldr	r3, [pc, #12]	; (8000998 <SystemClock_Config+0xc0>)
+ 800098c:	2201      	movs	r2, #1
+ 800098e:	601a      	str	r2, [r3, #0]
 }
- 800098e:	bf00      	nop
- 8000990:	3770      	adds	r7, #112	; 0x70
- 8000992:	46bd      	mov	sp, r7
- 8000994:	bd80      	pop	{r7, pc}
- 8000996:	bf00      	nop
+ 8000990:	bf00      	nop
+ 8000992:	3770      	adds	r7, #112	; 0x70
+ 8000994:	46bd      	mov	sp, r7
+ 8000996:	bd80      	pop	{r7, pc}
  8000998:	42420070 	.word	0x42420070
 
 0800099c <MX_CAN1_Init>:
@@ -1751,7 +1750,7 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
-// 从W25N512GVEIG读取DEVICE ID的函�???
+// 从W25N512GVEIG读取DEVICE ID的函�????
 uint8_t W25N512GVEIG_ReadDeviceID(void)
 {
  8000d5c:	b580      	push	{r7, lr}
