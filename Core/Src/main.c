@@ -32,10 +32,11 @@ CAN_TxHeaderTypeDef TxHeader;
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define BufferSize_rsFEF 8
 #define BufferSize 30
 #define BufferSize_ESP 20
 #define BufferSize_Sync 30
-// CS宏定�????
+// CS宏定�??????
 #define W25N512_CS_LOW()     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET)
 #define W25N512_CS_HIGH()    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET)
 
@@ -54,6 +55,8 @@ uint8_t txData_UART[] = "Hello, UART2!";  // 要发送的数据
 uint8_t rxData[BufferSize];
 uint8_t rxData_ESP[BufferSize_ESP];
 uint8_t txData_ESP[BufferSize_Sync];
+uint8_t rsFEF[] = {0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08};
+uint8_t rsFEF_RX[BufferSize_rsFEF];
 uint8_t rxData_cmp[] = {'f', 0x01, 0x02};
 /* USER CODE END PM */
 
@@ -67,6 +70,7 @@ SPI_HandleTypeDef hspi1;
 TIM_HandleTypeDef htim1;
 
 UART_HandleTypeDef huart1;
+UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
@@ -82,6 +86,7 @@ static void MX_RTC_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_USART3_UART_Init(void);
+static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 uint8_t W25N512GVEIG_ReadDeviceID(void);
 /* USER CODE END PFP */
@@ -99,9 +104,9 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 	TxHeader.StdId = 0x01;
-	TxHeader.DLC = 8;                 // 数据长度�????????????? 8 字节
-	TxHeader.IDE = CAN_ID_STD;        // 使用标准标识�?????????????
-	TxHeader.RTR = CAN_RTR_DATA;      // 数据�?????????????
+	TxHeader.DLC = 8;                 // 数据长度�??????????????? 8 字节
+	TxHeader.IDE = CAN_ID_STD;        // 使用标准标识�???????????????
+	TxHeader.RTR = CAN_RTR_DATA;      // 数据�???????????????
 
 
   /* USER CODE END 1 */
@@ -130,6 +135,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_SPI1_Init();
   MX_USART3_UART_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_SET); //IMOUT 关闭
@@ -152,23 +158,57 @@ int main(void)
   while (1)
   {
 
+// The first do while is for testing the RS485
+      do{
+    	 // SEGGER_RTT_printf(0, "sending stuff to rs485 \r\n");
+
+    	  if (HAL_UART_Transmit(&huart2, rsFEF, sizeof(rsFEF), 2000) == HAL_OK) {
+    		  SEGGER_RTT_printf(0, "Successfully sent to RS485 \r\n");
+    	                                                             }
+
+    	  HAL_Delay(1000);
+
+
+
+    	  HAL_StatusTypeDef status = HAL_UART_Receive(&huart2, rsFEF_RX, BufferSize_rsFEF, 3000);
+    	        //rxData[BufferSize - 1] = '\0'; // 添加字符串终止符
+    	        // �????????查接收状�????????
+    	        if (status == HAL_OK) {
+    	            // 成功接收到数�????????
+    	            // 在这里添加代码来处理接收到的数据
+    	            // 你可以使�???????? printf 或其他方式将接收到的数据显示出来
+
+    	      	  int dataSize = sizeof(rsFEF_RX);
+
+    	      	  SEGGER_RTT_printf(0, "Received RS485 DATA IS: ");
+    	      	  for (int i = 0; i < dataSize; i++) {
+    	      	      SEGGER_RTT_printf(0, "%02X ", rsFEF_RX[i]);
+    	      	  }
+    	      	    SEGGER_RTT_printf(0, "\r\n");
+    	        }
+
+
+      }while(1);
+
+
+
 	  SEGGER_RTT_printf(0, "DEVICEID = %06X ", deviceID);
 
 	  static bool uart1_pend = true;
 
 	  //-------------------------------------------------USART1 ---------------------------------------------------//
   while(uart1_pend){
-      // 等待接收数据，超时时间为 1000 毫秒，接收之前先清除�???有的缓存
+      // 等待接收数据，超时时间为 1000 毫秒，接收之前先清除�?????有的缓存
 	  memset(rxData, 0, BufferSize);
 
       HAL_StatusTypeDef status = HAL_UART_Receive(&huart1, rxData, BufferSize, 5000);
       //rxData[BufferSize - 1] = '\0'; // 添加字符串终止符
 
-      // �??????查接收状�??????
+      // �????????查接收状�????????
       if (status == HAL_OK) {
-          // 成功接收到数�??????
+          // 成功接收到数�????????
           // 在这里添加代码来处理接收到的数据
-          // 你可以使�?????? printf 或其他方式将接收到的数据显示出来
+          // 你可以使�???????? printf 或其他方式将接收到的数据显示出来
 
     	  int dataSize = sizeof(rxData);
 
@@ -185,7 +225,7 @@ int main(void)
     	    	  if (deviceID == 0x20)
     	    			  {
     	    		  SEGGER_RTT_printf(0, "Get the right Device ID \r\n");
-    	    		  rxData[7] = 0x50; //把VCU的flash结果也加�???
+    	    		  rxData[7] = 0x50; //把VCU的flash结果也加�?????
     //'c''modem result''sim result' 'aliyun result' 'motion result' 'nrfflash res' ''canbus result' 'vcu flash res'
     	    			  }
 
@@ -199,14 +239,14 @@ int main(void)
 
 
       } else if (status == HAL_TIMEOUT) {
-          // 超时，未接收到数�??????
+          // 超时，未接收到数�????????
     	  //HAL_UART_Transmit(&huart1, txData, sizeof(txData), 1000);
     	  SEGGER_RTT_printf(0, "Uart1_LOOP DATA IS timeout \r\n");
-          // 在这里可以添加�?�当的处理代�??????
+          // 在这里可以添加�?�当的处理代�????????
       } else {
           // 发生错误
     	  SEGGER_RTT_printf(0, "Uart1_LOOP DATA IS error \r\n");
-          // 在这里可以添加�?�当的错误处理代�??????
+          // 在这里可以添加�?�当的错误处理代�????????
       }
 
 
@@ -231,7 +271,7 @@ int main(void)
   }
 //-------------------------------------------------USART1 ---------------------------------------------------//
 
-//两�?�之间的timeout现在是匹配好�???
+//两�?�之间的timeout现在是匹配好�?????
 
 //--------------------------------------------------USART3--------------------------------------------//
 //uint8_t rxData_ESP[BufferSize_ESP];
@@ -244,12 +284,12 @@ int main(void)
       HAL_StatusTypeDef status = HAL_UART_Receive(&huart3, rxData_ESP, BufferSize_ESP, 1000);
       //rxData[BufferSize - 1] = '\0'; // 添加字符串终止符
 
-      // �??????查接收状�??????
+      // �????????查接收状�????????
       if (status == HAL_OK) {
-          // 成功接收到数�??????
+          // 成功接收到数�????????
 
           // 在这里添加代码来处理接收到的数据
-          // 你可以使�?????? printf 或其他方式将接收到的数据显示出来
+          // 你可以使�???????? printf 或其他方式将接收到的数据显示出来
 
     	  IGN_PA0_O_second = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);
     	  HAL_Delay(10);
@@ -295,13 +335,13 @@ int main(void)
 
 
         else if (status == HAL_TIMEOUT) {
-          // 超时，未接收到数�??????
+          // 超时，未接收到数�????????
     	  SEGGER_RTT_printf(0, "Uart3_LOOP DATA IS timeout \r\n");
-          // 在这里可以添加�?�当的处理代�??????
+          // 在这里可以添加�?�当的处理代�????????
       } else {
           // 发生错误
     	  SEGGER_RTT_printf(0, "Uart3_LOOP DATA IS error \r\n");
-          // 在这里可以添加�?�当的错误处理代�??????
+          // 在这里可以添加�?�当的错误处理代�????????
       }
       HAL_Delay(10);
   }while(0);
@@ -311,7 +351,7 @@ int main(void)
 
 
 
-//	  HAL_Delay(100);  // 延迟 1000 毫秒，即 1 �?????????????
+//	  HAL_Delay(100);  // 延迟 1000 毫秒，即 1 �???????????????
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -387,11 +427,11 @@ static void MX_CAN1_Init(void)
 
   /* USER CODE END CAN1_Init 1 */
   hcan1.Instance = CAN1;
-  hcan1.Init.Prescaler = 9;
+  hcan1.Init.Prescaler = 16;
   hcan1.Init.Mode = CAN_MODE_NORMAL;
   hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan1.Init.TimeSeg1 = CAN_BS1_4TQ;
-  hcan1.Init.TimeSeg2 = CAN_BS2_3TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_1TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_1TQ;
   hcan1.Init.TimeTriggeredMode = DISABLE;
   hcan1.Init.AutoBusOff = DISABLE;
   hcan1.Init.AutoWakeUp = DISABLE;
@@ -582,6 +622,39 @@ static void MX_USART1_UART_Init(void)
 }
 
 /**
+  * @brief USART2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART2_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART2_Init 0 */
+
+  /* USER CODE END USART2_Init 0 */
+
+  /* USER CODE BEGIN USART2_Init 1 */
+
+  /* USER CODE END USART2_Init 1 */
+  huart2.Instance = USART2;
+  huart2.Init.BaudRate = 9600;
+  huart2.Init.WordLength = UART_WORDLENGTH_8B;
+  huart2.Init.StopBits = UART_STOPBITS_1;
+  huart2.Init.Parity = UART_PARITY_NONE;
+  huart2.Init.Mode = UART_MODE_TX_RX;
+  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART2_Init 2 */
+
+  /* USER CODE END USART2_Init 2 */
+
+}
+
+/**
   * @brief USART3 Initialization Function
   * @param None
   * @retval None
@@ -597,7 +670,7 @@ static void MX_USART3_UART_Init(void)
 
   /* USER CODE END USART3_Init 1 */
   huart3.Instance = USART3;
-  huart3.Init.BaudRate = 9600;
+  huart3.Init.BaudRate = 115200;
   huart3.Init.WordLength = UART_WORDLENGTH_8B;
   huart3.Init.StopBits = UART_STOPBITS_1;
   huart3.Init.Parity = UART_PARITY_NONE;
@@ -673,7 +746,7 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
-// 从W25N512GVEIG读取DEVICE ID的函�????
+// 从W25N512GVEIG读取DEVICE ID的函�??????
 uint8_t W25N512GVEIG_ReadDeviceID(void)
 {
     uint8_t device_id[4];
